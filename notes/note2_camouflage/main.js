@@ -69,38 +69,28 @@ function main() {
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
 
     gl.useProgram(program);
 
     gl.bindVertexArray(vao);
 
-    // gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
-    // gl.uniform1f(pixelSizeUniformLocation, 20.0);
 
     setUniforms(gl, program, {
         u_resolution : {type : "uniform2fv", value : [gl.canvas.width, gl.canvas.height]},
-        u_pixelSize : {type : "uniform1fv", value : [20]},
+        u_pixelSize : {type : "uniform1fv", value : [15]},
         u_colors : {type : "uniform3fv", value : [0,0,0, 1,1,1]},
         u_center : {type : "uniform2fv", value : [gl.canvas.width / 2, gl.canvas.height / 2]}
     })
 
-    // draw
-    let primitiveType = gl.TRIANGLES;
-    let offset = 0;
-    let count = 6;
-    gl.drawArrays(primitiveType, offset, count);
-
-
-
-
-
     
+
+
     let then = 0;
     let time = 0;
     requestAnimationFrame(drawScene);
     function drawScene(now){
+        
         now *= 0.001;
         let deltaTime = now - then;
         then = now;
@@ -110,12 +100,29 @@ function main() {
             u_time : {type : "uniform1fv", value : [time]}
         })
 
-
-        console.log(now)
-        gl.drawArrays(primitiveType, offset, count);
+        
+        resize();
+        render();
         requestAnimationFrame(drawScene);
         
     }    
+    function resize(){
+        setUniforms(gl, program, {u_center : {type : "uniform2fv", value : [gl.canvas.width / 2, gl.canvas.height / 2]}})
+        webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+
+    }
+
+    function render(){
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        let primitiveType = gl.TRIANGLES;
+        let offset = 0;
+        let count = 6;
+        gl.drawArrays(primitiveType, offset, count);
+    }
+    function timeUpdate(){
+        
+    }
 }
 
 

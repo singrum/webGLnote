@@ -115,7 +115,7 @@ const Shader = {
         vec3 color;
         float minRad = 10.0;
         float maxRad = 200.0;
-        float noiseFreq = 0.01;
+        float noiseFreq = 0.05;
         
         t = length(coord - u_center);
         t -= noise(vec3(coord.xy * noiseFreq,u_time)) * (maxRad - minRad);
@@ -127,8 +127,8 @@ const Shader = {
     }
 
     void main() {
-        // vec2 roundCoord = round(coord / u_pixelSize) * u_pixelSize;
-        vec2 roundCoord = coord;
+        vec2 roundCoord = round(coord / u_pixelSize) * u_pixelSize;
+        // vec2 roundCoord = coord;
         vec3 color;
         color = camo(roundCoord);
         
