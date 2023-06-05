@@ -113,9 +113,9 @@ const Shader = {
     vec3 camo(vec2 coord){
         float t;
         vec3 color;
-        float minRad = 10.0;
-        float maxRad = 200.0;
-        float noiseFreq = 0.05;
+        float minRad = 0.0;
+        float maxRad = 40.0;
+        float noiseFreq = 0.1;
         
         t = length(coord - u_center);
         t -= noise(vec3(coord.xy * noiseFreq,u_time)) * (maxRad - minRad);

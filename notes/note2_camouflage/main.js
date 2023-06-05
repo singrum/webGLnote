@@ -1,130 +1,250 @@
 import {Shader} from "./shader.js";
 
-let vertexShaderSource = Shader.vertex;
-let fragmentShaderSource = Shader.fragment;
 
 
-function setUniforms(gl, program, uniforms){
 
-    Object.keys(uniforms).forEach(name => {
-        const location = gl.getUniformLocation(program, name);
-        const typeFn = uniforms[name].type;
+class App{
+    constructor(){
+        const canvas = document.querySelector("#c");
+        this.canvas = canvas;
+        const gl = canvas.getContext("webgl2");
+        this.gl = gl;
+
+
+        const program = webglUtils.createProgramFromSources(gl, [Shader.vertex, Shader.fragment]);
+        this.program = program;
+
         
-        const value = uniforms[name].value;
-        gl[typeFn](location, value);
+        webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        this.setAttribute();
+        this.setUniform();
+        this.setInteration();
         
-    });
+        
+        this.then = 0;
+        this.time = 0;
+        requestAnimationFrame(this.drawScene.bind(this));
 
+    }
+
+    setInteration(){
+        const downEvent = ()=>{
+            this.canvas.addEventListener("mousemove", moveEvent,false);
+            console.log(1)
+        }
+        const moveEvent = ()=>{
+            console.log(2)
+        }
+        const upEvent = ()=>{
+            this.canvas.removeEventListener("mousemove", moveEvent,false);
+            console.log(3)
+        }
+
+        this.canvas.addEventListener("mousedown", downEvent,false);
+    
+        this.canvas.addEventListener("mouseup", upEvent,false);
+        
+    }
+
+    setUniform(){
+        function getUniformLocationMap(gl, program, uniformNameArr){
+            const obj = {};
+            uniformNameArr.forEach(name => {
+                const location = gl.getUniformLocation(program, name);
+                obj[name] = location;
+                
+            });
+            return obj;
+        }
+        this.uniformLocationMap = getUniformLocationMap(this.gl,this.program,[
+            "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time"
+        ])
+        this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
+        this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], 15)
+        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0,0,0, 1,1,1])
+        this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
+    }
+    setAttribute(){
+        let positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
+        let positionBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
+        let positions = [
+            0,0,
+            window.innerWidth, 0,
+            0, window.innerHeight,
+            window.innerWidth,0,
+            window.innerWidth, window.innerHeight,
+            0, window.innerHeight,
+        ];
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(positions), this.gl.STATIC_DRAW);
+    
+        let vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(vao);
+        this.gl.enableVertexAttribArray(positionAttributeLocation);
+        let attrOption = {
+            size : 2,
+            type : this.gl.FLOAT,
+            normalize : false,
+            stride : 0,
+            offset : 0,      
+        }
+        this.gl.vertexAttribPointer(
+            positionAttributeLocation, ...Object.values(attrOption));
+        this.gl.useProgram(this.program);
+        this.gl.bindVertexArray(vao);
+    }
+
+    drawScene(now){
+        
+        now *= 0.001;
+        let deltaTime = now - this.then;
+        this.then = now;
+        
+        this.time += deltaTime;
+        this.gl.uniform1f(this.uniformLocationMap["u_time"], this.time);
+
+        
+        this.resize();
+        this.render();
+        requestAnimationFrame(this.drawScene.bind(this));
+        
+    }    
+    resize(){
+        
+        webglUtils.resizeCanvasToDisplaySize(this.canvas);
+        // this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
+
+
+    }
+
+    render(){
+        this.gl.clearColor(0, 0, 0, 0);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        let primitiveType = this.gl.TRIANGLES;
+        let offset = 0;
+        let count = 6;
+        this.gl.drawArrays(primitiveType, offset, count);
+    }
+    timeUpdate(){
+        
+    }
 }
 
 
-function main() {
-    // Get A WebGL context
-    let canvas = document.querySelector("#c");
-    let gl = canvas.getContext("webgl2");
-    if (!gl) {
-        return;
-    }
 
-    let program = webglUtils.createProgramFromSources(gl, [vertexShaderSource, fragmentShaderSource]);
-
-    let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-
-
-    let resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
-    // let pixelSizeUniformLocation = gl.getUniformLocation(program, "u_pixelSize");
+function getUniformLocationMap(gl, program, uniformNameArr){
+    const obj = {};
+    uniformNameArr.forEach(name => {
+        const location = gl.getUniformLocation(program, name);
+        obj[name] = location;
+        
+    });
+    return obj;
+}
 
 
-    let positionBuffer = gl.createBuffer();
+// function main() {
+//     // Get A WebGL context
+//     let canvas = document.querySelector("#c");
+//     let gl = canvas.getContext("webgl2");
+//     if (!gl) {
+//         return;
+//     }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+//     let program = webglUtils.createProgramFromSources(gl, [Shader.vertex, Shader.fragment]);
 
-    let positions = [
-        0,0,
-        window.innerWidth, 0,
-        0, window.innerHeight,
-        window.innerWidth,0,
-        window.innerWidth, window.innerHeight,
-        0, window.innerHeight,
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+//     let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+//     let positionBuffer = gl.createBuffer();
+//     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+//     let positions = [
+//         0,0,
+//         window.innerWidth, 0,
+//         0, window.innerHeight,
+//         window.innerWidth,0,
+//         window.innerWidth, window.innerHeight,
+//         0, window.innerHeight,
+//     ];
+//     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    let vao = gl.createVertexArray();
-
-    gl.bindVertexArray(vao);
-
-    gl.enableVertexAttribArray(positionAttributeLocation);
-
-    let attrOption = {
-        size : 2,
-        type : gl.FLOAT,
-        normalize : false,
-        stride : 0,
-        offset : 0,      
-    }
-    gl.vertexAttribPointer(
-        positionAttributeLocation, ...Object.values(attrOption));
-
-    webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-
-
-    gl.useProgram(program);
-
-    gl.bindVertexArray(vao);
+//     let vao = gl.createVertexArray();
+//     gl.bindVertexArray(vao);
+//     gl.enableVertexAttribArray(positionAttributeLocation);
+//     let attrOption = {
+//         size : 2,
+//         type : gl.FLOAT,
+//         normalize : false,
+//         stride : 0,
+//         offset : 0,      
+//     }
+//     gl.vertexAttribPointer(
+//         positionAttributeLocation, ...Object.values(attrOption));
+//     gl.useProgram(program);
+//     gl.bindVertexArray(vao);
 
 
-    setUniforms(gl, program, {
-        u_resolution : {type : "uniform2fv", value : [gl.canvas.width, gl.canvas.height]},
-        u_pixelSize : {type : "uniform1fv", value : [15]},
-        u_colors : {type : "uniform3fv", value : [0,0,0, 1,1,1]},
-        u_center : {type : "uniform2fv", value : [gl.canvas.width / 2, gl.canvas.height / 2]}
-    })
+//     webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+//     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
+
+
+
+//     const uniformLocationMap = getUniformLocationMap(gl,program,[
+//         "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time"
+//     ])
+//     gl.uniform2f(uniformLocationMap["u_resolution"], gl.canvas.width, gl.canvas.height)
+//     gl.uniform1f(uniformLocationMap["u_pixelSize"], 15)
+//     gl.uniform3fv(uniformLocationMap["u_colors"],[0,0,0, 1,1,1])
+//     gl.uniform2f(uniformLocationMap["u_center"],gl.canvas.width / 2, gl.canvas.height / 2)
+    
+    
     
 
 
-    let then = 0;
-    let time = 0;
-    requestAnimationFrame(drawScene);
-    function drawScene(now){
+//     let then = 0;
+//     let time = 0;
+//     requestAnimationFrame(drawScene);
+//     function drawScene(now){
         
-        now *= 0.001;
-        let deltaTime = now - then;
-        then = now;
+//         now *= 0.001;
+//         let deltaTime = now - then;
+//         then = now;
         
-        time += deltaTime;
-        setUniforms(gl, program, {
-            u_time : {type : "uniform1fv", value : [time]}
-        })
+//         time += deltaTime;
+//         gl.uniform1f(uniformLocationMap["u_time"], time);
 
         
-        resize();
-        render();
-        requestAnimationFrame(drawScene);
+//         resize();
+//         render();
+//         requestAnimationFrame(drawScene);
         
-    }    
-    function resize(){
-        setUniforms(gl, program, {u_center : {type : "uniform2fv", value : [gl.canvas.width / 2, gl.canvas.height / 2]}})
-        webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-
-    }
-
-    function render(){
-        gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        let primitiveType = gl.TRIANGLES;
-        let offset = 0;
-        let count = 6;
-        gl.drawArrays(primitiveType, offset, count);
-    }
-    function timeUpdate(){
+//     }    
+//     function resize(){
+//         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+//         gl.uniform2f(uniformLocationMap["u_center"],gl.canvas.width / 2, gl.canvas.height / 2)
         
-    }
+
+//     }
+
+//     function render(){
+//         gl.clearColor(0, 0, 0, 0);
+//         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+//         let primitiveType = gl.TRIANGLES;
+//         let offset = 0;
+//         let count = 6;
+//         gl.drawArrays(primitiveType, offset, count);
+//     }
+//     function timeUpdate(){
+        
+//     }
+// }
+
+
+
+function main(){
+    new App();
+
 }
 
-
-
-main();
+window.onload = main;
