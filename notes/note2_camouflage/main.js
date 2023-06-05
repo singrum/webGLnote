@@ -29,14 +29,54 @@ class App{
     }
 
     setInteration(){
+        this.isDown = false;
+        this.growingCircle = null;
+        this.shrinkingCircle = [];
+        this.currX = null;
+        this.currY = null;
+
+        class Circle{
+            constructor(centerX, centerY, size){
+                this.centerX = centerX;
+                this.centerY = centerY;
+                this.size = size;
+            }
+        }
+        const coordToPixel = coord => Math.floor(coord / this.u_pixelSize) * this.u_pixelSize;
+
+        const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
+
         const downEvent = e=>{
             this.canvas.addEventListener("mousemove", moveEvent,false);
-            this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
+            // this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
+            this.isDown = true;
+            [this.currX,this.currY] = [coordToPixel(e.clientX), coordToPixel(e.clientY)];
+            this.growingCircle = new Circle(this.currX, this.currY, 20);
+            
+
+
         }
         const moveEvent = e=>{
+            const newX = coordToPixel(e.clientX);
+            const newY = coordToPixel(e.clientY);
+            if(isSamePixel(this.currX, this.currY, newX, newY)) return;
+            this.currX = newX;
+            this.currY = newY;
+            this.shrinkingCircle.push(this.growingCircle);
+            this.growingCircle = new Circle(this.currX, this.currY, 20);
+
+            console.log(this.growingCircle)
+            console.log(this.shrinkingCircle)
+
+
         }
         const upEvent = e=>{
             this.canvas.removeEventListener("mousemove", moveEvent,false);
+            this.isDown = false;
+            this.currX = null;
+            this.currY = null;
+            this.shrinkingCircle.push(this.growingCircle);
+            this.growingCircle = null;
         }
 
         this.canvas.addEventListener("mousedown", downEvent,false);
@@ -46,6 +86,8 @@ class App{
     }
 
     setUniform(){
+        this.u_pixelSize = 15;
+
         function getUniformLocationMap(gl, program, uniformNameArr){
             const obj = {};
             uniformNameArr.forEach(name => {
@@ -56,12 +98,15 @@ class App{
             return obj;
         }
         this.uniformLocationMap = getUniformLocationMap(this.gl,this.program,[
-            "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time"
+            "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time", "u_centers", "u_sizes", "u_arrayLength"
         ])
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
-        this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], 15)
+        this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
         this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0,0,0, 1,1,1])
         this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
+        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], [])
+        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], [])
+        this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], 0)
     }
     setAttribute(){
         let positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
@@ -96,28 +141,56 @@ class App{
     drawScene(now){
         
         now *= 0.001;
-        let deltaTime = now - this.then;
+        this.deltaTime = now - this.then;
         this.then = now;
         
-        this.time += deltaTime;
+        this.time += this.deltaTime;
         this.gl.uniform1f(this.uniformLocationMap["u_time"], this.time);
 
         
         // this.resize();
+        this.valueUpdate();
         this.render();
         requestAnimationFrame(this.drawScene.bind(this));
         
     }    
+    valueUpdate(){
+        if(this.growingCircle){
+            this.growingCircle.size += this.deltaTime * 2;
+        }
+        
+        for(let circle of this.shrinkingCircle){
+            
+            circle.size -= this.deltaTime * 3;
+
+        }
+
+        this.shrinkingCircle = this.shrinkingCircle.filter(e=>e.size > 0);
+
+        const centers = [];
+        const sizes = [];
+        if(this.growingCircle){
+            centers.push(this.growingCircle.centerX, this.growingCircle.centerY)
+            sizes.push(this.growingCircle.size)
+        }
+        this.shrinkingCircle.forEach(c => {centers.push(c.centerX, c.centerY)});
+        this.shrinkingCircle.forEach(c=>{sizes.push(c.size)});
+
+        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
+        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
+        this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
+
+    }
     resize(){
         
         webglUtils.resizeCanvasToDisplaySize(this.canvas);
-        // this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
         this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
 
 
     }
 
     render(){
+        
         this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
         let primitiveType = this.gl.TRIANGLES;
@@ -130,113 +203,6 @@ class App{
     }
 }
 
-
-
-function getUniformLocationMap(gl, program, uniformNameArr){
-    const obj = {};
-    uniformNameArr.forEach(name => {
-        const location = gl.getUniformLocation(program, name);
-        obj[name] = location;
-        
-    });
-    return obj;
-}
-
-
-// function main() {
-//     // Get A WebGL context
-//     let canvas = document.querySelector("#c");
-//     let gl = canvas.getContext("webgl2");
-//     if (!gl) {
-//         return;
-//     }
-
-//     let program = webglUtils.createProgramFromSources(gl, [Shader.vertex, Shader.fragment]);
-
-//     let positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-//     let positionBuffer = gl.createBuffer();
-//     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-//     let positions = [
-//         0,0,
-//         window.innerWidth, 0,
-//         0, window.innerHeight,
-//         window.innerWidth,0,
-//         window.innerWidth, window.innerHeight,
-//         0, window.innerHeight,
-//     ];
-//     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-//     let vao = gl.createVertexArray();
-//     gl.bindVertexArray(vao);
-//     gl.enableVertexAttribArray(positionAttributeLocation);
-//     let attrOption = {
-//         size : 2,
-//         type : gl.FLOAT,
-//         normalize : false,
-//         stride : 0,
-//         offset : 0,      
-//     }
-//     gl.vertexAttribPointer(
-//         positionAttributeLocation, ...Object.values(attrOption));
-//     gl.useProgram(program);
-//     gl.bindVertexArray(vao);
-
-
-//     webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-//     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-
-
-
-//     const uniformLocationMap = getUniformLocationMap(gl,program,[
-//         "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time"
-//     ])
-//     gl.uniform2f(uniformLocationMap["u_resolution"], gl.canvas.width, gl.canvas.height)
-//     gl.uniform1f(uniformLocationMap["u_pixelSize"], 15)
-//     gl.uniform3fv(uniformLocationMap["u_colors"],[0,0,0, 1,1,1])
-//     gl.uniform2f(uniformLocationMap["u_center"],gl.canvas.width / 2, gl.canvas.height / 2)
-    
-    
-    
-
-
-//     let then = 0;
-//     let time = 0;
-//     requestAnimationFrame(drawScene);
-//     function drawScene(now){
-        
-//         now *= 0.001;
-//         let deltaTime = now - then;
-//         then = now;
-        
-//         time += deltaTime;
-//         gl.uniform1f(uniformLocationMap["u_time"], time);
-
-        
-//         resize();
-//         render();
-//         requestAnimationFrame(drawScene);
-        
-//     }    
-//     function resize(){
-//         webglUtils.resizeCanvasToDisplaySize(gl.canvas);
-//         gl.uniform2f(uniformLocationMap["u_center"],gl.canvas.width / 2, gl.canvas.height / 2)
-        
-
-//     }
-
-//     function render(){
-//         gl.clearColor(0, 0, 0, 0);
-//         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-//         let primitiveType = gl.TRIANGLES;
-//         let offset = 0;
-//         let count = 6;
-//         gl.drawArrays(primitiveType, offset, count);
-//     }
-//     function timeUpdate(){
-        
-//     }
-// }
 
 
 

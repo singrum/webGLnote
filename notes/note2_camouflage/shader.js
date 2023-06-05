@@ -30,14 +30,21 @@ const Shader = {
 
     precision highp float;
 
+
     uniform float u_pixelSize;
     uniform vec3 u_colors[2];
     uniform vec2 u_center;
     uniform float u_time;
-    
+    uniform vec2 u_centers[256];
+    uniform float u_sizes[256];
+    uniform int u_arrayLength;
+
     in vec2 clipCoord;
     in vec2 coord;
     out vec4 outColor;
+
+
+
     vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
     vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
     vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
@@ -113,6 +120,10 @@ const Shader = {
     vec3 camo(vec2 coord){
         float t;
         vec3 color;
+
+
+
+        
         float minRad = 0.0;
         float maxRad = 40.0;
         float noiseFreq = 0.1;
@@ -127,7 +138,9 @@ const Shader = {
     }
 
     void main() {
-        vec2 roundCoord = round(coord / u_pixelSize) * u_pixelSize;
+        float i;
+        
+        vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
         // vec2 roundCoord = coord;
         vec3 color;
         color = camo(roundCoord);
