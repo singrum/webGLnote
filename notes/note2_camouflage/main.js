@@ -29,16 +29,14 @@ class App{
     }
 
     setInteration(){
-        const downEvent = ()=>{
+        const downEvent = e=>{
             this.canvas.addEventListener("mousemove", moveEvent,false);
-            console.log(1)
+            this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
         }
-        const moveEvent = ()=>{
-            console.log(2)
+        const moveEvent = e=>{
         }
-        const upEvent = ()=>{
+        const upEvent = e=>{
             this.canvas.removeEventListener("mousemove", moveEvent,false);
-            console.log(3)
         }
 
         this.canvas.addEventListener("mousedown", downEvent,false);
@@ -105,7 +103,7 @@ class App{
         this.gl.uniform1f(this.uniformLocationMap["u_time"], this.time);
 
         
-        this.resize();
+        // this.resize();
         this.render();
         requestAnimationFrame(this.drawScene.bind(this));
         
