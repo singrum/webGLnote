@@ -36,8 +36,8 @@ const Shader = {
     uniform vec3 u_colors[3];
     uniform vec2 u_minMaxRads[3];
     uniform float u_time;
-    uniform vec2 u_centers[256];
-    uniform float u_sizes[256];
+    uniform vec2 u_centers[128];
+    uniform float u_sizes[128];
     uniform int u_arrayLength;
 
     in vec2 clipCoord;
