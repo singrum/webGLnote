@@ -123,18 +123,26 @@ const Shader = {
 
 
 
-        
-        float minRad = 0.0;
-        float maxRad = 40.0;
-        float noiseFreq = 0.1;
-        
-        t = length(coord - u_center);
-        t -= noise(vec3(coord.xy * noiseFreq,u_time)) * (maxRad - minRad);
-        t = step(minRad,t);
-        if(t == 1.0) color = u_colors[0];
-        if(t == 0.0) color = u_colors[1];
-        
+        for(int i = 0; i < u_arrayLength; i++){
+            vec2 center = u_centers[i];
+            float size = u_sizes[i];
+
+            float minRad = size / 5.0;
+            float maxRad = size;
+            float noiseFreq = 0.1;
+            
+            t = length(coord - center);
+            t -= noise(vec3(coord.xy * noiseFreq, u_time  *1.0)) * (maxRad - minRad);
+            t = step(minRad,t);
+            if(t == 0.0) color = u_colors[1];
+            
+            
+
+
+
+        }
         return color;
+
     }
 
     void main() {

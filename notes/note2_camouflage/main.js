@@ -51,7 +51,7 @@ class App{
             // this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX), coordToPixel(e.clientY)];
-            this.growingCircle = new Circle(this.currX, this.currY, 20);
+            this.growingCircle = new Circle(this.currX, this.currY, 60);
             
 
 
@@ -63,10 +63,8 @@ class App{
             this.currX = newX;
             this.currY = newY;
             this.shrinkingCircle.push(this.growingCircle);
-            this.growingCircle = new Circle(this.currX, this.currY, 20);
+            this.growingCircle = new Circle(this.currX, this.currY, 60);
 
-            console.log(this.growingCircle)
-            console.log(this.shrinkingCircle)
 
 
         }
@@ -156,26 +154,25 @@ class App{
     }    
     valueUpdate(){
         if(this.growingCircle){
-            this.growingCircle.size += this.deltaTime * 2;
+            this.growingCircle.size += this.deltaTime * 100;
         }
         
         for(let circle of this.shrinkingCircle){
             
-            circle.size -= this.deltaTime * 3;
+            circle.size -= this.deltaTime * 70;
 
         }
 
-        this.shrinkingCircle = this.shrinkingCircle.filter(e=>e.size > 0);
+        this.shrinkingCircle = this.shrinkingCircle.filter(e=>e.size > 15);
 
-        const centers = [];
-        const sizes = [];
+        const centers = this.shrinkingCircle.flatMap(c=>[c.centerX,c.centerY])
+        const sizes = this.shrinkingCircle.map(c=>c.size);
+
         if(this.growingCircle){
             centers.push(this.growingCircle.centerX, this.growingCircle.centerY)
             sizes.push(this.growingCircle.size)
         }
-        this.shrinkingCircle.forEach(c => {centers.push(c.centerX, c.centerY)});
-        this.shrinkingCircle.forEach(c=>{sizes.push(c.size)});
-
+        console.log(centers)
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
