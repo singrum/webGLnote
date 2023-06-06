@@ -42,23 +42,24 @@ class App{
                 this.size = size;
             }
         }
-        const coordToPixel = coord => Math.floor(coord / this.u_pixelSize) * this.u_pixelSize;
+        const coordToPixel = coord => Math.floor(coord / (this.u_pixelSize * 8)) * this.u_pixelSize * 8;
 
         const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
 
         const downEvent = e=>{
-            this.canvas.addEventListener("mousemove", moveEvent,false);
-            // this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
+            if ('ontouchstart' in window) document.addEventListener("touchmove", moveEvent,false)
+            else document.addEventListener("mousemove", moveEvent,false)
+            
             this.isDown = true;
-            [this.currX,this.currY] = [coordToPixel(e.clientX), coordToPixel(e.clientY)];
+            [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
             this.growingCircle = new Circle(this.currX, this.currY, 70);
             
 
 
         }
         const moveEvent = e=>{
-            const newX = coordToPixel(e.clientX);
-            const newY = coordToPixel(e.clientY);
+            const newX = coordToPixel(e.clientX ?? e.touches[0].clientX);
+            const newY = coordToPixel(e.clientY ?? e.touches[0].clientY);
             if(isSamePixel(this.currX, this.currY, newX, newY)) return;
             this.currX = newX;
             this.currY = newY;
@@ -69,7 +70,8 @@ class App{
 
         }
         const upEvent = e=>{
-            this.canvas.removeEventListener("mousemove", moveEvent,false);
+            if ('ontouchstart' in window) document.removeEventListener("touchmove", moveEvent,false)
+            else document.removeEventListener("mousemove", moveEvent,false)
             this.isDown = false;
             this.currX = null;
             this.currY = null;
@@ -77,14 +79,16 @@ class App{
             this.growingCircle = null;
         }
 
-        this.canvas.addEventListener("mousedown", downEvent,false);
-    
-        this.canvas.addEventListener("mouseup", upEvent,false);
+
+        if ('ontouchstart' in window) document.addEventListener('touchstart',downEvent)
+		else document.addEventListener('mousedown',downEvent)
+        if ('ontouchstart' in window) document.addEventListener('touchend',upEvent)
+		else document.addEventListener('mouseup',upEvent)
         
     }
 
     setUniform(){
-        this.u_pixelSize = 15;
+        this.u_pixelSize = 5;
 
         function getUniformLocationMap(gl, program, uniformNameArr){
             const obj = {};
@@ -110,9 +114,9 @@ class App{
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
         this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.271, 0.482, 0.616)
         this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([0.659, 0.855, 0.863, 0.114, 0.208, 0.341, 0.945, 0.98, 0.933]));
-        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], new Float32Array([-4,4, -4,4, -4,4]))
-        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], new Float32Array([]))
-        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], new Float32Array([]))
+        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], new Float32Array([-2,2, -4,4, -4,4]))
+        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], new Float32Array(0))
+        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], new Float32Array(0))
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], 0)
     }
     setAttribute(){
