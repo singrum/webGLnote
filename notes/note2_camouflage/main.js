@@ -51,7 +51,7 @@ class App{
             // this.gl.uniform2f(this.uniformLocationMap["u_center"],e.clientX, e.clientY)
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX), coordToPixel(e.clientY)];
-            this.growingCircle = new Circle(this.currX, this.currY, 60);
+            this.growingCircle = new Circle(this.currX, this.currY, 70);
             
 
 
@@ -63,7 +63,7 @@ class App{
             this.currX = newX;
             this.currY = newY;
             this.shrinkingCircle.push(this.growingCircle);
-            this.growingCircle = new Circle(this.currX, this.currY, 60);
+            this.growingCircle = new Circle(this.currX, this.currY, 70);
 
 
 
@@ -108,9 +108,9 @@ class App{
         ])
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
-        this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.376, 0.424, 0.22)
-        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0.157, 0.212, 0.094, 0.737, 0.424, 0.145, 0.996, 0.98, 0.878]);
-        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], [-5,5, -5,5, 0.1,1])
+        this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.271, 0.482, 0.616)
+        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0.659, 0.855, 0.863, 0.114, 0.208, 0.341, 0.945, 0.98, 0.933]);
+        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], [-5,5, -5,5, 0.5,1])
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], [])
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], [])
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], 0)
@@ -168,7 +168,7 @@ class App{
         
         for(let circle of this.shrinkingCircle){
             
-            circle.size -= this.deltaTime * 70;
+            circle.size -= this.deltaTime * 40;
 
         }
 
