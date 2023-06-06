@@ -129,7 +129,7 @@ const Shader = {
             vec2 center = u_centers[i];
             float size = u_sizes[i];
             float length = length(coord - center);
-            float noiseFreq = 0.05;
+            float noiseFreq = 0.02;
 
             for(int j =0; j<3 ; j++){
                 float minRad = size * u_minMaxRads[j].x;
@@ -155,8 +155,8 @@ const Shader = {
     void main() {
         float i;
         
-        vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
-        // vec2 roundCoord = coord;
+        // vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
+        vec2 roundCoord = coord;
         vec3 color;
         color = camo(roundCoord);
         

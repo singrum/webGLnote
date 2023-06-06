@@ -109,10 +109,10 @@ class App{
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
         this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.271, 0.482, 0.616)
-        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0.659, 0.855, 0.863, 0.114, 0.208, 0.341, 0.945, 0.98, 0.933]);
-        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], [-5,5, -5,5, 0.5,1])
-        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], [])
-        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], [])
+        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([0.659, 0.855, 0.863, 0.114, 0.208, 0.341, 0.945, 0.98, 0.933]));
+        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], new Float32Array([-4,4, -4,4, -4,4]))
+        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], new Float32Array([]))
+        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], new Float32Array([]))
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], 0)
     }
     setAttribute(){
@@ -155,7 +155,7 @@ class App{
         this.gl.uniform1f(this.uniformLocationMap["u_time"], this.time);
 
         
-        // this.resize();
+        this.resize();
         this.valueUpdate();
         this.render();
         requestAnimationFrame(this.drawScene.bind(this));
@@ -182,8 +182,8 @@ class App{
             sizes.push(this.growingCircle.size)
         }
         
-        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
-        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
+        this.gl.uniform2fv(this.uniformLocationMap["u_centers"], new Float32Array(centers));
+        this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], new Float32Array(sizes));
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
 
     }
