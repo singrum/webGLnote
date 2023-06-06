@@ -42,7 +42,7 @@ class App{
                 this.size = size;
             }
         }
-        const coordToPixel = coord => Math.floor(coord / (this.u_pixelSize * 16)) * this.u_pixelSize * 16;
+        const coordToPixel = coord => Math.floor(coord / (this.u_pixelSize * 8)) * this.u_pixelSize * 8;
 
         const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
 
