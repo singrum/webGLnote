@@ -96,12 +96,21 @@ class App{
             return obj;
         }
         this.uniformLocationMap = getUniformLocationMap(this.gl,this.program,[
-            "u_resolution", "u_pixelSize", "u_colors", "u_center", "u_time", "u_centers", "u_sizes", "u_arrayLength"
+            "u_resolution", 
+            "u_pixelSize", 
+            "u_colors", 
+            "u_bgColor", 
+            "u_minMaxRads", 
+            "u_time", 
+            "u_centers", 
+            "u_sizes", 
+            "u_arrayLength"
         ])
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
-        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0,0,0, 1,1,1])
-        this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
+        this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.376, 0.424, 0.22)
+        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],[0.157, 0.212, 0.094, 0.737, 0.424, 0.145, 0.996, 0.98, 0.878]);
+        this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], [-5,5, -5,5, 0.1,1])
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], [])
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], [])
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], 0)
@@ -172,7 +181,7 @@ class App{
             centers.push(this.growingCircle.centerX, this.growingCircle.centerY)
             sizes.push(this.growingCircle.size)
         }
-        console.log(centers)
+        
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
