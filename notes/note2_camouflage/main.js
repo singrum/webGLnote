@@ -42,7 +42,7 @@ class App{
                 this.size = size;
             }
         }
-        const coordToPixel = coord => Math.floor(coord / (this.u_pixelSize * 8)) * this.u_pixelSize * 8;
+        const coordToPixel = coord => Math.floor(coord / (this.u_pixelSize * 16)) * this.u_pixelSize * 16;
 
         const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
 
@@ -185,7 +185,7 @@ class App{
             centers.push(this.growingCircle.centerX, this.growingCircle.centerY)
             sizes.push(this.growingCircle.size)
         }
-        
+        console.log(centers.length)
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
