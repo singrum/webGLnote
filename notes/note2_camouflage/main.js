@@ -172,7 +172,7 @@ class App{
         
         for(let circle of this.shrinkingCircle){
             
-            circle.size -= this.deltaTime * 40;
+            circle.size -= this.deltaTime * 60;
 
         }
 
@@ -185,7 +185,7 @@ class App{
             centers.push(this.growingCircle.centerX, this.growingCircle.centerY)
             sizes.push(this.growingCircle.size)
         }
-        console.log(centers.length)
+        
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
