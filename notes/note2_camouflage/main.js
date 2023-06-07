@@ -20,11 +20,69 @@ class App{
         this.setAttribute();
         this.setUniform();
         this.setInteration();
+        this.setButton();
         
         
         this.then = 0;
         this.time = 0;
         requestAnimationFrame(this.drawScene.bind(this));
+
+    }
+    
+    setButton(){
+
+        const setColor = color=>{
+            switch(color){
+                case "green":
+                    this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.325, 0.4, 0.224)
+                    this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+                        0.643, 0.584, 0.424, 
+                        0.165, 0.188, 0.149, 
+                        0.345, 0.282, 0.153
+                    ]));
+                    
+                    break;
+                case "red":
+                    this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.851, 0.627, 0.682)
+                    this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+                        0.769, 0.314, 0.49, 
+                        0.871, 0.82, 0.788, 
+                        0.69, 0.008, 0.376
+                    ]));
+                    break;
+                case "blue":
+                    this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.49, 0.624, 0.812)
+                    this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+                        0.729, 0.804, 0.922, 
+                        0.208, 0.314, 0.498, 
+                        0.208, 0.204, 0.302
+                    ]));
+                    break;
+                case "yellow":
+                    this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.741, 0.698, 0.49)
+                    this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+                        0.839, 0.831, 0.675, 
+                        0.667, 0.596, 0.322, 
+                        0.424, 0.345, 0.137
+                    ]));
+                    break;
+                case "gray":
+                    this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.702, 0.706, 0.686)
+                    this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+                        0.776, 0.776, 0.784, 
+                        0.949, 0.949, 0.949, 
+                        0.373, 0.369, 0.4
+                    ]));
+                    break;
+            }
+
+        }
+
+        document.querySelector("#green-btn").addEventListener("click", ()=>{setColor("green")})
+        document.querySelector("#red-btn").addEventListener("click", ()=>{setColor("red")})
+        document.querySelector("#blue-btn").addEventListener("click", ()=>{setColor("blue")})
+        document.querySelector("#yellow-btn").addEventListener("click", ()=>{setColor("yellow")})
+        document.querySelector("#gray-btn").addEventListener("click", ()=>{setColor("gray")})
 
     }
 
@@ -47,8 +105,8 @@ class App{
         const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
 
         const downEvent = e=>{
-            if ('ontouchstart' in window) document.addEventListener("touchmove", moveEvent,false)
-            else document.addEventListener("mousemove", moveEvent,false)
+            if ('ontouchstart' in window) this.canvas.addEventListener("touchmove", moveEvent,false)
+            else this.canvas.addEventListener("mousemove", moveEvent,false)
             
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
@@ -70,8 +128,8 @@ class App{
 
         }
         const upEvent = e=>{
-            if ('ontouchstart' in window) document.removeEventListener("touchmove", moveEvent,false)
-            else document.removeEventListener("mousemove", moveEvent,false)
+            if ('ontouchstart' in window) this.canvas.removeEventListener("touchmove", moveEvent,false)
+            else this.canvas.removeEventListener("mousemove", moveEvent,false)
             this.isDown = false;
             this.currX = null;
             this.currY = null;
@@ -80,10 +138,10 @@ class App{
         }
 
 
-        if ('ontouchstart' in window) document.addEventListener('touchstart',downEvent)
-		else document.addEventListener('mousedown',downEvent)
-        if ('ontouchstart' in window) document.addEventListener('touchend',upEvent)
-		else document.addEventListener('mouseup',upEvent)
+        if ('ontouchstart' in window) this.canvas.addEventListener('touchstart',downEvent)
+		else this.canvas.addEventListener('mousedown',downEvent)
+        if ('ontouchstart' in window) this.canvas.addEventListener('touchend',upEvent)
+		else this.canvas.addEventListener('mouseup',upEvent)
         
     }
 
@@ -112,8 +170,12 @@ class App{
         ])
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
-        this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.271, 0.482, 0.616)
-        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([ 0.114, 0.208, 0.341, 0.945, 0.98, 0.933, 0.659, 0.855, 0.863]));
+        this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.325, 0.4, 0.224)
+        this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
+            0.643, 0.584, 0.424, 
+            0.165, 0.188, 0.149, 
+            0.345, 0.282, 0.153
+        ]));
         this.gl.uniform2fv(this.uniformLocationMap["u_minMaxRads"], new Float32Array([ -6,4, -6,4, -2,2]))
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], [])
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], [])

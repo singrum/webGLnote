@@ -20,26 +20,29 @@ body {
     right : 0px;
     top : 0px;
     display : flex;
+    width : 210px;
+    justify-content: space-around;
 
 }
 
 .color-btn{
     width : 40px;
     height : 40px;
+    border-radius: 20px;
 }
 
-.color-btn>.green{
+.color-btn-set>.green{
     background-color: green;
 }
-.color-btn>.red{
+.color-btn-set>.red{
     background-color: red;
 }
-.color-btn>.blue{
+.color-btn-set>.blue{
     background-color: blue;
 }
-.color-btn>.yellow{
+.color-btn-set>.yellow{
     background-color: yellow;
 }
-.color-btn>.gray{
+.color-btn-set>.gray{
     background-color: gray;
 }
