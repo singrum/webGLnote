@@ -155,8 +155,8 @@ const Shader = {
     void main() {
         float i;
         
-        vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
-        // vec2 roundCoord = coord;
+        // vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
+        vec2 roundCoord = coord;
         vec3 color;
         color = camo(roundCoord);
         

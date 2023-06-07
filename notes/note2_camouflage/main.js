@@ -52,7 +52,7 @@ class App{
             
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
-            this.growingCircle = new Circle(this.currX, this.currY, 40);
+            this.growingCircle = new Circle(this.currX, this.currY, 60);
             
 
 
@@ -64,7 +64,7 @@ class App{
             this.currX = newX;
             this.currY = newY;
             this.shrinkingCircle.push(this.growingCircle);
-            this.growingCircle = new Circle(this.currX, this.currY, 40);
+            this.growingCircle = new Circle(this.currX, this.currY, 60);
 
 
 
@@ -167,12 +167,12 @@ class App{
     }    
     valueUpdate(){
         if(this.growingCircle){
-            this.growingCircle.size += this.deltaTime * 100;
+            this.growingCircle.size += this.deltaTime * 40;
         }
         
         for(let circle of this.shrinkingCircle){
             
-            circle.size -= this.deltaTime * 60;
+            circle.size -= this.deltaTime * 40;
 
         }
 
