@@ -52,7 +52,7 @@ class App{
             
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
-            this.growingCircle = new Circle(this.currX, this.currY, 70);
+            this.growingCircle = new Circle(this.currX, this.currY, 40);
             
 
 
@@ -64,7 +64,7 @@ class App{
             this.currX = newX;
             this.currY = newY;
             this.shrinkingCircle.push(this.growingCircle);
-            this.growingCircle = new Circle(this.currX, this.currY, 70);
+            this.growingCircle = new Circle(this.currX, this.currY, 40);
 
 
 
