@@ -77,12 +77,21 @@ class App{
             }
 
         }
-
-        document.querySelector("#green-btn").addEventListener("click", ()=>{setColor("green")})
-        document.querySelector("#red-btn").addEventListener("click", ()=>{setColor("red")})
-        document.querySelector("#blue-btn").addEventListener("click", ()=>{setColor("blue")})
-        document.querySelector("#yellow-btn").addEventListener("click", ()=>{setColor("yellow")})
-        document.querySelector("#gray-btn").addEventListener("click", ()=>{setColor("gray")})
+        const buttons = {
+            green : document.querySelector("#green-btn"),
+            red : document.querySelector("#red-btn"),
+            blue : document.querySelector("#blue-btn"),
+            yellow : document.querySelector("#yellow-btn"),
+            gray : document.querySelector("#gray-btn")
+        }
+        buttons.green.addEventListener("click", e=>{
+            setColor("green");
+            
+        })
+        buttons.red.addEventListener("click", ()=>{setColor("red")})
+        buttons.blue.addEventListener("click", ()=>{setColor("blue")})
+        buttons.yellow.addEventListener("click", ()=>{setColor("yellow")})
+        buttons.gray.addEventListener("click", ()=>{setColor("gray")})
 
     }
 

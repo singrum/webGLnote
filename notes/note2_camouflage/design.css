@@ -17,10 +17,10 @@ body {
 
 .color-btn-set{
     position : absolute;
-    right : 0px;
-    top : 0px;
+    right : 3px;
+    top : 3px;
     display : flex;
-    width : 210px;
+    width : 240px;
     justify-content: space-around;
 
 }
@@ -28,21 +28,22 @@ body {
 .color-btn{
     width : 40px;
     height : 40px;
-    border-radius: 20px;
+    border-radius: 40px;
+    border : 2px solid white;
 }
 
 .color-btn-set>.green{
-    background-color: green;
+    background-color: #536639;
 }
 .color-btn-set>.red{
-    background-color: red;
+    background-color: #d9a0ae;
 }
 .color-btn-set>.blue{
-    background-color: blue;
+    background-color: #7d9fcf;
 }
 .color-btn-set>.yellow{
-    background-color: yellow;
+    background-color: #bdb27d;
 }
 .color-btn-set>.gray{
-    background-color: gray;
+    background-color: #b3b4af;
 }
