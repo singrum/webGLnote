@@ -1,0 +1,49 @@
+* {
+    outline: none;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+#c {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.color-btn-set{
+    position : absolute;
+    right : 3px;
+    top : 3px;
+    display : flex;
+    width : 240px;
+    justify-content: space-around;
+
+}
+
+.color-btn{
+    width : 40px;
+    height : 40px;
+    border-radius: 40px;
+    border : 2px solid white;
+}
+
+.color-btn-set>.green{
+    background-color: #536639;
+}
+.color-btn-set>.red{
+    background-color: #d9a0ae;
+}
+.color-btn-set>.blue{
+    background-color: #7d9fcf;
+}
+.color-btn-set>.yellow{
+    background-color: #bdb27d;
+}
+.color-btn-set>.gray{
+    background-color: #b3b4af;
+}
