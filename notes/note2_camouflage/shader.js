@@ -39,6 +39,7 @@ const Shader = {
     uniform vec2 u_centers[128];
     uniform float u_sizes[128];
     uniform int u_arrayLength;
+    uniform int u_pixel;
 
     in vec2 clipCoord;
     in vec2 coord;
@@ -122,7 +123,8 @@ const Shader = {
         float t;
         vec3 color;
 
-
+        int key = 2;
+        bool isBackground = true;
         color = u_bgColor;
         for(int i = 0; i < u_arrayLength; i++){
 
@@ -131,13 +133,14 @@ const Shader = {
             float length = length(coord - center);
             float noiseFreq = 0.02;
 
-            for(int j =0; j<3 ; j++){
+            for(int j =0; j <= key ; j++){
                 float minRad = size * u_minMaxRads[j].x;
                 float maxRad = size * u_minMaxRads[j].y;
                 t = length - noise(vec3(coord.xy * noiseFreq, u_time  *1.0 + float(j) * 10.0)) * (maxRad - minRad);
                 t = step(minRad,t);
-                if(t == 0.0) color = u_colors[j];
+                if(t == 0.0) {key = j; isBackground = false; break;}
             }
+            
 
             
             
@@ -148,15 +151,27 @@ const Shader = {
 
 
         }
+        if(isBackground){
+            color =u_bgColor;
+        }
+        else{
+            color = u_colors[key];
+        }
         return color;
 
     }
 
     void main() {
         float i;
+        vec2 roundCoord;
+        if(u_pixel == 1){
+            roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
+        }
+        else{
+            roundCoord = coord;
+        }
         
-        vec2 roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
-        // vec2 roundCoord = coord;
+        
         vec3 color;
         color = camo(roundCoord);
         

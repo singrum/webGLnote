@@ -36,42 +36,44 @@ class App{
                 case "green":
                     this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.325, 0.4, 0.224)
                     this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
-                        0.643, 0.584, 0.424, 
+                        
+
+                        0.345, 0.282, 0.153,
                         0.165, 0.188, 0.149, 
-                        0.345, 0.282, 0.153
+                        0.643, 0.584, 0.424
                     ]));
                     
                     break;
                 case "red":
                     this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.851, 0.627, 0.682)
                     this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
-                        0.769, 0.314, 0.49, 
+                        0.69, 0.008, 0.376,
                         0.871, 0.82, 0.788, 
-                        0.69, 0.008, 0.376
+                        0.769, 0.314, 0.49
                     ]));
                     break;
                 case "blue":
                     this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.49, 0.624, 0.812)
                     this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
-                        0.729, 0.804, 0.922, 
+                        0.208, 0.204, 0.302, 
                         0.208, 0.314, 0.498, 
-                        0.208, 0.204, 0.302
+                        0.729, 0.804, 0.922
                     ]));
                     break;
                 case "yellow":
                     this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.741, 0.698, 0.49)
                     this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
-                        0.839, 0.831, 0.675, 
+                        0.424, 0.345, 0.137,
                         0.667, 0.596, 0.322, 
-                        0.424, 0.345, 0.137
+                        0.839, 0.831, 0.675
                     ]));
                     break;
                 case "gray":
                     this.gl.uniform3f(this.uniformLocationMap["u_bgColor"], 0.702, 0.706, 0.686)
                     this.gl.uniform3fv(this.uniformLocationMap["u_colors"],new Float32Array([
-                        0.776, 0.776, 0.784, 
+                        0.373, 0.369, 0.4,
                         0.949, 0.949, 0.949, 
-                        0.373, 0.369, 0.4
+                        0.776, 0.776, 0.784 
                     ]));
                     break;
             }
@@ -82,7 +84,8 @@ class App{
             red : document.querySelector("#red-btn"),
             blue : document.querySelector("#blue-btn"),
             yellow : document.querySelector("#yellow-btn"),
-            gray : document.querySelector("#gray-btn")
+            gray : document.querySelector("#gray-btn"),
+            pixel : document.querySelector("#pixel-check")
         }
         buttons.green.addEventListener("click", e=>{
             setColor("green");
@@ -92,6 +95,7 @@ class App{
         buttons.blue.addEventListener("click", ()=>{setColor("blue")})
         buttons.yellow.addEventListener("click", ()=>{setColor("yellow")})
         buttons.gray.addEventListener("click", ()=>{setColor("gray")})
+        this.buttons = buttons;
 
     }
 
@@ -175,7 +179,8 @@ class App{
             "u_time", 
             "u_centers", 
             "u_sizes", 
-            "u_arrayLength"
+            "u_arrayLength",
+            "u_pixel"
         ])
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
         this.gl.uniform1f(this.uniformLocationMap["u_pixelSize"], this.u_pixelSize)
@@ -260,6 +265,8 @@ class App{
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
+        this.gl.uniform1i(this.uniformLocationMap["u_pixel"], this.buttons.pixel.checked ? 1 : 0);
+        
 
     }
     resize(){
