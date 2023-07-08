@@ -157,7 +157,7 @@
   
       // Check the link status
       const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
-      console.log(linked)
+      
       if (!linked) {
           // something went wrong with the link
           const lastError = gl.getProgramInfoLog(program);
