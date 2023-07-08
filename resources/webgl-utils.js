@@ -161,6 +161,7 @@
       if (!linked) {
           // something went wrong with the link
           const lastError = gl.getProgramInfoLog(program);
+          console.log(lastError);
           errFn(`Error in program linking: ${lastError}\n${
             shaders.map(shader => {
               const src = addLineNumbersWithError(gl.getShaderSource(shader));
