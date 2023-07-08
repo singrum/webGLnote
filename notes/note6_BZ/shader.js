@@ -4,12 +4,15 @@ const Shader = {
     in vec2 a_position;
     
     uniform vec2 u_resolution;
-    
+    uniform float u_radius;
+    uniform vec2 u_center;
+
     out vec2 clipCoord;
     out vec2 coord;
 
     void main() {
         coord = a_position;
+        coord += u_radius;
         // convert the position from pixels to 0.0 to 1.0
         vec2 zeroToOne = a_position / u_resolution;
         
@@ -129,7 +132,7 @@ const Shader = {
         vec3 color;
         color = vec3(1.0,1.0,0.0);
         
-        outColor = vec4(data[0], data[1], data[2], 1.0);
+        outColor = vec4(color, 1.0);
     }
     `
 }
