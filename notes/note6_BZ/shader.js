@@ -32,10 +32,6 @@ const Shader = {
 
 
 
-    layout(std140) uniform MyUniformBlock {
-        float data[3];
-    };
-
 
     // uniform float u_pixelSize;
     // uniform vec3 u_bgColor;

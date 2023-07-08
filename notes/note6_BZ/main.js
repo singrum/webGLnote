@@ -51,23 +51,10 @@ class App{
         
         this.gl.uniform2f(this.uniformLocationMap["u_resolution"], this.canvas.width, this.canvas.height)
 
-
-
         
     }
     setAttribute(){
-        // UBO 생성
-        const ubo = this.gl.createBuffer();
 
-        // UBO 바인딩
-        this.gl.bindBuffer(this.gl.UNIFORM_BUFFER, ubo);
-        // 유니폼 데이터 설정
-        const uniformData = new Float32Array([0.1,0.2,0.3]);
-
-        // UBO에 데이터 업로드
-        this.gl.bufferData(this.gl.UNIFORM_BUFFER, uniformData, this.gl.DYNAMIC_DRAW);
-        const bindingPoint = 0;
-        this.gl.bindBufferBase(this.gl.UNIFORM_BUFFER, bindingPoint, ubo);
 
 
 
