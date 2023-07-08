@@ -245,7 +245,7 @@ class App{
         if(this.growingCircle){
             this.growingCircle.size += this.deltaTime * 40;
         }
-        
+        console.log(this.shrinkingCircle)
         for(let circle of this.shrinkingCircle){
             
             circle.size -= this.deltaTime * 40;
