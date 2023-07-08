@@ -265,7 +265,6 @@ class App{
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
-        console.log(sizes.length)
         this.gl.uniform1i(this.uniformLocationMap["u_pixel"], this.buttons.pixel.checked ? 1 : 0);
         
 
@@ -275,7 +274,15 @@ class App{
         webglUtils.resizeCanvasToDisplaySize(this.canvas);
         this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
 
-
+        function handleResize() {
+            // WebGL 컨텍스트 재구성
+            gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            // 추가적인 처리 로직
+            // ...
+          }
+          
+          // 화면 확대 이벤트에 대한 이벤트 핸들러 등록
+          window.addEventListener('resize', handleResize);
     }
 
     render(){
