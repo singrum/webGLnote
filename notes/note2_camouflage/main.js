@@ -274,9 +274,9 @@ class App{
         webglUtils.resizeCanvasToDisplaySize(this.canvas);
         this.gl.uniform2f(this.uniformLocationMap["u_center"],this.canvas.width / 2, this.canvas.height / 2)
 
-        handleResize = () =>{
+        const handleResize = () =>{
             // WebGL 컨텍스트 재구성
-            this.gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+            this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
             // 추가적인 처리 로직
             // ...
           }
