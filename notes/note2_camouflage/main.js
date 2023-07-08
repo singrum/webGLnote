@@ -118,9 +118,11 @@ class App{
         const isSamePixel = (prevX, prevY, currX, currY) => coordToPixel(prevX) === coordToPixel(currX) && coordToPixel(prevY) === coordToPixel(currY);
 
         const downEvent = e=>{
+            
             if ('ontouchstart' in window) this.canvas.addEventListener("touchmove", moveEvent,false)
             else this.canvas.addEventListener("mousemove", moveEvent,false)
             
+            console.log(e.touches)
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
             this.growingCircle = new Circle(this.currX, this.currY, 60);
@@ -245,7 +247,7 @@ class App{
         if(this.growingCircle){
             this.growingCircle.size += this.deltaTime * 40;
         }
-        console.log(this.shrinkingCircle)
+        
         for(let circle of this.shrinkingCircle){
             
             circle.size -= this.deltaTime * 40;
