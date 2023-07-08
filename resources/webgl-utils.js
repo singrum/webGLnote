@@ -162,13 +162,13 @@
           // something went wrong with the link
           const lastError = gl.getProgramInfoLog(program);
           console.log(lastError);
-          errFn(`Error in program linking: ${lastError}\n${
-            shaders.map(shader => {
-              const src = addLineNumbersWithError(gl.getShaderSource(shader));
-              const type = gl.getShaderParameter(shader, gl.SHADER_TYPE);
-              return `${glEnumToString(gl, type)}:\n${src}`;
-            }).join('\n')
-          }`);
+          // errFn(`Error in program linking: ${lastError}\n${
+          //   shaders.map(shader => {
+          //     const src = addLineNumbersWithError(gl.getShaderSource(shader));
+          //     const type = gl.getShaderParameter(shader, gl.SHADER_TYPE);
+          //     return `${glEnumToString(gl, type)}:\n${src}`;
+          //   }).join('\n')
+          // }`);
   
           gl.deleteProgram(program);
           return null;
