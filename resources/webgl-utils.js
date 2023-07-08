@@ -164,7 +164,7 @@
             shaders.map(shader => {
               const src = addLineNumbersWithError(gl.getShaderSource(shader));
               const type = gl.getShaderParameter(shader, gl.SHADER_TYPE);
-              return `${glEnumToString(gl, type)}:\n${src}`;
+              return `${gl.EnumToString(gl, type)}:\n${src}`;
             }).join('\n')
           }`);
   
