@@ -30,16 +30,17 @@ const Shader = {
 
     precision highp float;
 
+    
 
-    uniform float u_pixelSize;
-    uniform vec3 u_bgColor;
-    uniform vec3 u_colors[3];
-    uniform vec2 u_minMaxRads[3];
-    uniform float u_time;
-    uniform vec2 u_centers[64];
-    uniform float u_sizes[64];
-    uniform int u_arrayLength;
-    uniform int u_pixel;
+    // uniform float u_pixelSize;
+    // uniform vec3 u_bgColor;
+    // uniform vec3 u_colors[3];
+    // uniform vec2 u_minMaxRads[3];
+    // uniform float u_time;
+    // uniform vec2 u_centers[64];
+    // uniform float u_sizes[64];
+    // uniform int u_arrayLength;
+    // uniform int u_pixel;
 
     in vec2 clipCoord;
     in vec2 coord;
@@ -119,67 +120,13 @@ const Shader = {
       return (2.2 * n_xyz + 1.0) / 2.0; // (0, 1)
     //   return 2.2 * n_xyz; //(-1, 1)
     }
-    vec3 camo(vec2 coord){
-        float t;
-        vec3 color;
-
-        int key = 2;
-        bool isBackground = true;
-        color = u_bgColor;
-        for(int i = 0; i < u_arrayLength; i++){
-
-            vec2 center = u_centers[i];
-            float size = u_sizes[i];
-            float length = length(coord - center);
-            float noiseFreq = 0.02;
-
-            for(int j =0; j <= key ; j++){
-                float minRad = size * u_minMaxRads[j].x;
-                float maxRad = size * u_minMaxRads[j].y;
-                if(length < maxRad){
-                    t = length - noise(vec3(coord.xy * noiseFreq, u_time  *1.0 + float(j) * 10.0)) * (maxRad - minRad);
-                    t = step(minRad,t);
-                }
-                else {
-                    t = 1.0;
-                }
-
-                if(t == 0.0) {key = j; isBackground = false; break;}
-            }
-            
-
-            
-            
-            
-            
-            
-
-
-
-        }
-        if(isBackground){
-            color =u_bgColor;
-        }
-        else{
-            color = u_colors[key];
-        }
-        return color;
-
-    }
 
     void main() {
         float i;
-        vec2 roundCoord;
-        if(u_pixel == 1){
-            roundCoord = floor(coord / u_pixelSize) * u_pixelSize;
-        }
-        else{
-            roundCoord = coord;
-        }
         
         
         vec3 color;
-        color = camo(roundCoord);
+        color = vec3(1.0,1.0,0.0);
         
         outColor = vec4(color, 1.0);
     }
