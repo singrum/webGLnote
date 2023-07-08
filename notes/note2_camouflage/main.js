@@ -122,7 +122,7 @@ class App{
             if ('ontouchstart' in window) this.canvas.addEventListener("touchmove", moveEvent,false)
             else this.canvas.addEventListener("mousemove", moveEvent,false)
             
-            console.log(e.touches)
+            
             this.isDown = true;
             [this.currX,this.currY] = [coordToPixel(e.clientX ?? e.touches[0].clientX), coordToPixel(e.clientY ?? e.touches[0].clientY)];
             this.growingCircle = new Circle(this.currX, this.currY, 60);
