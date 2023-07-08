@@ -265,6 +265,7 @@ class App{
         this.gl.uniform2fv(this.uniformLocationMap["u_centers"], centers);
         this.gl.uniform1fv(this.uniformLocationMap["u_sizes"], sizes);
         this.gl.uniform1i(this.uniformLocationMap["u_arrayLength"], sizes.length);
+        console.log(sizes.length)
         this.gl.uniform1i(this.uniformLocationMap["u_pixel"], this.buttons.pixel.checked ? 1 : 0);
         
 
