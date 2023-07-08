@@ -136,8 +136,14 @@ const Shader = {
             for(int j =0; j <= key ; j++){
                 float minRad = size * u_minMaxRads[j].x;
                 float maxRad = size * u_minMaxRads[j].y;
-                t = length - noise(vec3(coord.xy * noiseFreq, u_time  *1.0 + float(j) * 10.0)) * (maxRad - minRad);
-                t = step(minRad,t);
+                if(length < maxRad){
+                    t = length - noise(vec3(coord.xy * noiseFreq, u_time  *1.0 + float(j) * 10.0)) * (maxRad - minRad);
+                    t = step(minRad,t);
+                }
+                else {
+                    t = 1.0;
+                }
+
                 if(t == 0.0) {key = j; isBackground = false; break;}
             }
             

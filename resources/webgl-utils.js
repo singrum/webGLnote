@@ -157,6 +157,7 @@
   
       // Check the link status
       const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+      console.log(linked)
       if (!linked) {
           // something went wrong with the link
           const lastError = gl.getProgramInfoLog(program);
@@ -164,7 +165,7 @@
             shaders.map(shader => {
               const src = addLineNumbersWithError(gl.getShaderSource(shader));
               const type = gl.getShaderParameter(shader, gl.SHADER_TYPE);
-              return `${gl.EnumToString(gl, type)}:\n${src}`;
+              return `${glEnumToString(gl, type)}:\n${src}`;
             }).join('\n')
           }`);
   
