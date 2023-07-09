@@ -4,15 +4,12 @@ const Shader = {
     in vec2 a_position;
     
     uniform vec2 u_resolution;
-    uniform float u_radius;
-    uniform vec2 u_center;
 
     out vec2 clipCoord;
     out vec2 coord;
 
     void main() {
         coord = a_position;
-        coord += u_radius;
         // convert the position from pixels to 0.0 to 1.0
         vec2 zeroToOne = a_position / u_resolution;
         
@@ -35,21 +32,12 @@ const Shader = {
 
 
 
-
-    // uniform float u_pixelSize;
-    // uniform vec3 u_bgColor;
-    // uniform vec3 u_colors[3];
-    // uniform vec2 u_minMaxRads[3];
-    // uniform float u_time;
-    // uniform vec2 u_centers[64];
-    // uniform float u_sizes[64];
-    // uniform int u_arrayLength;
-    // uniform int u_pixel;
-
     in vec2 clipCoord;
     in vec2 coord;
     out vec4 outColor;
 
+    uniform vec2 u_center;
+    uniform float u_radius;
 
 
     vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -125,14 +113,23 @@ const Shader = {
     //   return 2.2 * n_xyz; //(-1, 1)
     }
 
+    vec3 color(){
+        float dist = distance(coord, u_center);
+        
+        if(dist > u_radius){
+            discard;
+        }
+        else{
+            return vec3(1.0,1.0,0.0);
+        }
+    }
+
     void main() {
         float i;
         
         
-        vec3 color;
-        color = vec3(1.0,1.0,0.0);
         
-        outColor = vec4(color, 1.0);
+        outColor = vec4(color(), 1.0);
     }
     `
 }
