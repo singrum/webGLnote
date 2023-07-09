@@ -39,11 +39,25 @@ class App {
 		this.counter = 0;
 		this.period = 1;
 		this.currPointers = []
+		this.currCircles = []
 		requestAnimationFrame(this.render.bind(this));
 
 	}
 	setInteration() {
 		const downEvent = e => {
+			if ('ontouchstart' in window) this.canvas.addEventListener("touchmove", moveEvent,false)
+            else this.canvas.addEventListener("mousemove", moveEvent,false)
+
+			if ('ontouchstart' in window) {
+				this.currPointers = e.targetTouches
+
+			}
+			else {
+				this.currPointers = [e]
+
+			}
+		}
+		const moveEvent = e=>{
 			if ('ontouchstart' in window) {
 				this.currPointers = e.targetTouches
 
@@ -54,6 +68,9 @@ class App {
 			}
 		}
 		const upEvent = e => {
+			if ('ontouchstart' in window) this.canvas.removeEventListener("touchmove", moveEvent,false)
+            else this.canvas.removeEventListener("mousemove", moveEvent,false)
+
 			if ('ontouchstart' in window) {
 				for (let touch of e.changedTouches) {
 					this.currPointers = this.currPointers.filter(e => e !== touch);
@@ -164,46 +181,42 @@ class App {
 
 
 		this.resize();
-		this.valueUpdate();
-		// this.draw();
+		this.circleValueUpdate();
+		for(let circle of this.currCircles){
+			this.drawCircle(circle.centerX, circle.centerY, circle.radius)
+		}
+		console.log(this.currCircles)
 		requestAnimationFrame(this.render.bind(this));
 
 	}
 	periodAct() {
-		console.log(this.currPointers)
+		
 		for (let touch of this.currPointers) {
-			new Circle(touch.clientX, touch.clinentY);
-			
+			const circle = new Circle(touch.clientX, touch.clientY);
+			this.currCircles.push(circle);
 		}
 
 	}
-	valueUpdate() {
-
+	circleValueUpdate() {
+		for(let circle of this.currCircles){
+			circle.addRad(this.deltaTime * 10);
+		}
 
 
 	}
 	resize() {
-
 		webglUtils.resizeCanvasToDisplaySize(this.canvas);
-
-
 	}
 
-	draw() {
-
-		// this.gl.clearColor(0, 0, 0, 0);
-		// this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-		let primitiveType = this.gl.TRIANGLES;
-		let offset = 0;
-		let count = 6;
-		let center = [100, 100]
-		let radius = this.time * 10;
-		this.setRect(this.gl, ...center, radius);
-		this.gl.uniform2f(this.uniformLocationMap["u_center"], ...center);
+	drawCircle(centerX, centerY, radius){
+		
+		this.setRect(this.gl, centerX, centerY, radius);
+		this.gl.uniform2f(this.uniformLocationMap["u_center"], centerX, centerY);
 		this.gl.uniform1f(this.uniformLocationMap["u_radius"], radius);
-		this.gl.drawArrays(primitiveType, offset, count);
+		this.gl.drawArrays(this.gl.TRIANGLES, 0, 6);
 
 	}
+
 	setRect(gl, x, y, rad) {
 		const x1 = x - rad;
 		const x2 = x + rad;
