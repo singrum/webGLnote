@@ -2,10 +2,11 @@ import { Shader } from "./shader.js";
 
 
 class Circle {
-	constructor(centerX, centerY){
+	constructor(centerX, centerY, BWflag){
 		this.centerX = centerX;
 		this.centerY = centerY;
 		this.radius = 0;
+		this.BWflag = BWflag;
 	}
 	addRad(x){
 		this.radius += x;
@@ -116,13 +117,6 @@ class App {
 	setAttribute() {
 
 
-
-
-
-
-
-
-
 		// attribute는 buffer에서 가져옴 buffer 생성
 		let positionBuffer = this.gl.createBuffer();
 		// 전역 바인드 포인트가 positionBuffer을 가리키게 함. gpu가 positionBuffer 접근 가능. 바인드 하는 순간 GPU가 현재 그것을 사용할 수 있게 됨.
@@ -185,7 +179,7 @@ class App {
 		for(let circle of this.currCircles){
 			this.drawCircle(circle.centerX, circle.centerY, circle.radius)
 		}
-		console.log(this.currCircles)
+		
 		requestAnimationFrame(this.render.bind(this));
 
 	}
@@ -201,7 +195,11 @@ class App {
 		for(let circle of this.currCircles){
 			circle.addRad(this.deltaTime * 10);
 		}
+		
+		// 매우 큰 원 제거
+		if(this.currCircles[0] > Math.hypot(this.canvas.width, this.canvas.height) / 2){
 
+		}
 
 	}
 	resize() {
